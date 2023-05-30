@@ -1,35 +1,74 @@
 import "reflect-metadata";
-import express from "express";
-import cors from "cors";
+import { ApolloServer, gql } from "apollo-server";
 import dataSource from "./utils";
-import wilderController from "./controller/wilder";
-import skillController from "./controller/skill";
-import gradeController from "./controller/grade";
 
-const app = express();
+import { Wilder } from "./entity/wilder";
+import { Skill } from "./entity/skill";
 
-app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+const typeDefs = gql`
+  type Wilder {
+    name: String
+    grades: [Grade]
+  }
+  type Skill {
+    name: String
+  }
+  type Grade {
+    grade: Int
+    skill: Skill
+  }
+  type Query {
+    getAllWilders: [Wilder]
+  }
+  type Mutation {
+    createSkill(name: String): Skill
+  }
+`;
 
-app.get("/", (req, res) => {
-  res.send("Hello world");
+const resolvers = {
+  Query: {
+    getAllWilders: async () => {
+      const allWilders = await dataSource.manager.find(Wilder, {
+        relations: {
+          grades: {
+            skill: true,
+          },
+        },
+      });
+      console.log(JSON.stringify(allWilders, null, 2));
+      return allWilders;
+    },
+  },
+  Mutation: {
+    createSkill: async (_: any, args: any) => {
+      console.log(args);
+      const skillToCreate = new Skill();
+      skillToCreate.name = args.name;
+      return await dataSource.manager.save(Skill, skillToCreate);
+    },
+  },
+};
+const {
+  ApolloServerPluginLandingPageLocalDefault,
+} = require("apollo-server-core");
+// The ApolloServer constructor requires two parameters: your schema
+// definition and your set of resolvers.
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  csrfPrevention: true,
+  cache: "bounded",
+  /**
+   * What's up with this embed: true option?
+   * These are our recommended settings for using AS;
+   * they aren't the defaults in AS3 for backwards-compatibility reasons but
+   * will be the defaults in AS4. For production environments, use
+   * ApolloServerPluginLandingPageProductionDefault instead.
+   **/
+  plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
 });
 
-app.get("/api/wilder", wilderController.read);
-app.post("/api/wilder", wilderController.create);
-
-app.get("/api/skill", skillController.read);
-app.post("/api/skill", skillController.create);
-
-app.post("/api/grade", gradeController.create);
-
-const port = 5000;
-
-const start = async (): Promise<void> => {
-  await dataSource.initialize();
-  app.listen(port, () => {
-    console.log(`Example app listening on http://localhost:${port}`);
-  });
-};
-
-void start();
+// The `listen` method launches a web server.
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`);
+});
