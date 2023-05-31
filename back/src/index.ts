@@ -1,66 +1,15 @@
 import "reflect-metadata";
+import { ApolloServer } from "apollo-server";
+import { buildSchema } from "type-graphql";
+import { WilderResolver } from "./resolver/wilderResolver";
 import dataSource from "./utils";
-const { ApolloServer, gql } = require("apollo-server");
-import { Wilder } from "./entity/wilder";
-import { Skill } from "./entity/skill";
-const typeDefs = gql`
-  type Wilder {
-    name: String
-    grades: [Grade]
-  }
-  type Skill {
-    name: String
-  }
-  type Grade {
-    grade: Int
-    skill: Skill
-  }
-  type Query {
-    getAllWilders: [Wilder]
-    getAllSkills: [Skill]
-  }
-  type Mutation {
-    createSkill(name: String): Skill
-  }
-`;
 
-const resolvers = {
-  Query: {
-    getAllWilders: async () => {
-      const allWilders = await dataSource.manager.find(Wilder, {
-        relations: {
-          grades: {
-            skill: true,
-          },
-        },
-      });
-      console.log(JSON.stringify(allWilders, null, 2));
-      return allWilders;
-    },
-    getAllSkills: async () => {
-      const allSkills = await dataSource.manager.find(Skill);
-      console.log(JSON.stringify(allSkills, null, 2));
-      return allSkills;
-    },
-  },
-  Mutation: {
-    createSkill: async (_: any, args: any) => {
-      console.log(args);
-      const skillToCreate = new Skill();
-      skillToCreate.name = args.name;
-      return await dataSource.manager.save(Skill, skillToCreate);
-    },
-  },
-};
+const port = 5000;
 
-const port = 4000;
-
-const start = async () => {
+const start = async (): Promise<void> => {
   await dataSource.initialize();
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-  });
+  const schema = await buildSchema({ resolvers: [WilderResolver] });
+  const server = new ApolloServer({ schema });
 
   try {
     const { url }: { url: string } = await server.listen({ port });

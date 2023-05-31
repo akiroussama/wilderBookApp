@@ -13,7 +13,7 @@ export class Skill {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => [Grade])
   @OneToMany(() => Grade, (grade) => grade.skill)
   public grades: Grade[];
 }
