@@ -1,29 +1,45 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+const CREATE_WILDER = gql`
+   mutation Mutation($name: String!) {
+    createWilder(name: $name) {
+        name
+    }
+}
+`;
+
 const AddWilderForm = () => {
-  const [wilderName, setWilderName] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
+  const [addData, { loading, error }] = useMutation(CREATE_WILDER, {
+    onCompleted: (data) => {
+      console.log("Added data:", data.addData);
+      setInputValue("");
+    },
+    onError: (error) => {
+      console.error("Error adding data:", error);
+    },
+  });
+
+  const handleInputChange = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleFormSubmit = (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    addData({ variables: { name: inputValue } });
+  };
+
   return (
-    <div>
-      <input
-        value={wilderName}
-        onChange={(e) => {
-          setWilderName(e.target.value);
-        }}
-      />
-      <br />
-      <button
-        onClick={async () => {
-          try {
-            // await axios.post("http://localhost:5000/api/wilder", {
-            //   name: wilderName,
-            // });
-          } catch (err) {
-            console.log(err);
-          }
-        }}
-      >
-        Save Wilder
+    <form onSubmit={handleFormSubmit}>
+      <input type="text" value={inputValue} onChange={handleInputChange} />
+      <button type="submit" disabled={loading}>
+        {loading ? "Adding..." : "Add Data"}
       </button>
-    </div>
+      {error && <p>Error: {error.message}</p>}
+    </form>
   );
 };
 
