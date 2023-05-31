@@ -1,9 +1,11 @@
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Wilder } from "./wilder";
 import { Skill } from "./skill";
-
+import { ObjectType, Field } from "type-graphql";
+@ObjectType()
 @Entity()
 export class Grade {
+  @Field()
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -13,12 +15,14 @@ export class Grade {
   @Column()
   public skillId: number;
 
+  @Field()
   @Column()
   public grade: number;
 
   @ManyToOne(() => Wilder, (wilder) => wilder.grades)
   public wilder: Wilder;
 
+  @Field(() => Skill)
   @ManyToOne(() => Skill, (skill) => skill.grades)
   public skill: Skill;
 }
