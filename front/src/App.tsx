@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./App.css";
 import Wilder, { IWilderProps } from "./components/Wilder";
 import AddWilderForm from "./components/AddWilderForm";
+import { useQuery, gql } from "@apollo/client";
+
+const GET_ALL_WILDERS = gql`
+    query GetAllWilders {
+        getAllWilders {
+            name
+            grades {
+                grade
+                skill {
+                    name
+                }
+            }
+        }
+   }
+`;
 
 function App() {
   const dataManipulation = (dataFromApi: any) => {
@@ -16,18 +30,13 @@ function App() {
     });
     return newData;
   };
-  const [wilders, setWilders] = useState<IWilderProps[]>([]);
+  const { loading, error, data } = useQuery(GET_ALL_WILDERS);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const wildersFromApi = await axios.get(
-        "http://localhost:5000/api/wilder"
-      );
-      const formattedWilders = dataManipulation(wildersFromApi.data);
-      setWilders(formattedWilders);
-    };
-    fetchData();
-  }, []);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+  console.log(data);
+  const wilders = dataManipulation(data.getAllWilders);
+  console.log(wilders);
   return (
     <div>
       <header>
@@ -39,7 +48,7 @@ function App() {
         <AddWilderForm />
         <h2>Wilders</h2>
         <section className="card-row">
-          {wilders.map((el, index) => (
+          {wilders.map((el: any, index: number) => (
             <Wilder
               key={index}
               name={el.name}

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 const AddWilderForm = () => {
   const [wilderName, setWilderName] = useState("");
@@ -14,9 +13,9 @@ const AddWilderForm = () => {
       <button
         onClick={async () => {
           try {
-            await axios.post("http://localhost:5000/api/wilder", {
-              name: wilderName,
-            });
+            // await axios.post("http://localhost:5000/api/wilder", {
+            //   name: wilderName,
+            // });
           } catch (err) {
             console.log(err);
           }
