@@ -1,24 +1,26 @@
-import dataSource from "../utils";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { Wilder } from "../entity/wilder";
-import { Skill } from "../entity/skill";
-import { Resolver, Query, Mutation, Arg } from "type-graphql";
+import dataSource from "../utils";
 
 @Resolver(Wilder)
-export class wilderResolvers {
+export class WilderResolver {
   @Query(() => [Wilder])
   async getAllWilders(): Promise<Wilder[]> {
-    return await dataSource.manager.find(Wilder);
-  }
-  @Query(() => [Wilder])
-  async getAllWildersSkills(): Promise<Wilder[]> {
-    const allWilders = await dataSource.manager.find(Wilder, {
+    return await dataSource.manager.find(Wilder, {
       relations: {
         grades: {
           skill: true,
         },
       },
     });
-    console.log(JSON.stringify(allWilders, null, 2));
-    return allWilders;
+  }
+
+  @Mutation(() => Wilder)
+  async createWilder(@Arg("name") name: string): Promise<Wilder> {
+    const newWilder = new Wilder();
+    newWilder.name = name;
+    const wilderFromDB = await dataSource.manager.save(Wilder, newWilder);
+    console.log(wilderFromDB);
+    return wilderFromDB;
   }
 }
