@@ -21,17 +21,4 @@ export class wilderResolvers {
     console.log(JSON.stringify(allWilders, null, 2));
     return allWilders;
   }
-
-  @Query(() => [Skill])
-  async getAllSkills(): Promise<Skill[]> {
-    return await dataSource.manager.find(Skill);
-  }
-
-  @Mutation(() => Skill)
-  async createSkill(name: string): Promise<Skill> {
-    console.log(Arg);
-    const skillToCreate = new Skill();
-    skillToCreate.name = Arg.name;
-    return await dataSource.manager.save(Skill, skillToCreate);
-  }
 }
