@@ -1,6 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { wilderResolvers } from "./resolver/wilderResolver";
+import { WilderResolver } from "./resolver/WilderResolver";
 import dataSource from "./utils";
 import { buildSchema } from "type-graphql";
 import { skillResolvers } from "./resolver/skillResolver";
@@ -9,7 +9,7 @@ const port = 4000;
 export const startServer = async () => {
   await dataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [wilderResolvers, skillResolvers],
+    resolvers: [WilderResolver, skillResolvers],
   });
   const server = new ApolloServer({
     schema,
