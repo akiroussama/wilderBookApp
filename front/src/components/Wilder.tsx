@@ -28,9 +28,7 @@ const Wilder = ({ wilderId, name, city, skills }: IWilderProps) => {
 
   // Call the mutation and provide the variable
   const handleDeleteWilder = (id: number) => {
-    console.log("deleteWilderId", id);
     deleteWilder({ variables: { deleteWilderId: id } });
-    // deleteWilder({ variables: { deleteWilderId: id } });
   };
   return (
     <article className="card">
