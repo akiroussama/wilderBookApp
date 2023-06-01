@@ -133,3 +133,6 @@ footer {
   height: 20px;
   width: 20px;
 }
+.highlighted {
+  background-color: yellow;
+}

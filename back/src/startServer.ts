@@ -13,6 +13,8 @@ export const startServer = async () => {
   });
   const server = new ApolloServer({
     schema,
+
+    // subscriptions
   });
 
   try {

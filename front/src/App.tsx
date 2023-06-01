@@ -3,31 +3,25 @@ import "./App.css";
 import Wilder, { IWilderProps } from "./components/Wilder";
 import AddWilderForm from "./components/AddWilderForm";
 import { useQuery, gql } from "@apollo/client";
-
-const GET_ALL_WILDERS = gql`
-    query GetAllWilders {
-        getAllWilders {
-            name
-            grades {
-                grade
-                skill {
-                    name
-                }
-            }
-        }
-   }
-`;
+import { GET_ALL_WILDERS } from "./graphql/getAllWilders";
+import RecentlyAddedWilder from "./components/RecentlyAddedWilder";
 
 function App() {
   const dataManipulation = (dataFromApi: any) => {
-    const newData = dataFromApi.map((wilder: { grades: []; name: string }) => {
-      const cleanSkills = wilder.grades.map(
-        (grade: { grade: number; skill: { name: string } }) => {
-          return { title: grade.skill.name, votes: grade.grade };
-        }
-      );
-      return { name: wilder.name, skills: cleanSkills };
-    });
+    const newData = dataFromApi.map(
+      (wilder: { grades: []; name: string; id: number }) => {
+        const cleanSkills = wilder.grades.map(
+          (grade: { grade: number; skill: { name: string } }) => {
+            return { title: grade.skill.name, votes: grade.grade };
+          }
+        );
+        return {
+          name: wilder.name,
+          skills: cleanSkills,
+          id: wilder.id,
+        };
+      }
+    );
     return newData;
   };
   const { loading, error, data } = useQuery(GET_ALL_WILDERS);
@@ -54,9 +48,11 @@ function App() {
               name={el.name}
               city={el.city}
               skills={el.skills}
+              wilderId={el.id}
             />
           ))}
         </section>
+        <RecentlyAddedWilder />
       </main>
       <footer>
         <div className="container">
