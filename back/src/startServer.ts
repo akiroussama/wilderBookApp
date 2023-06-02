@@ -4,7 +4,7 @@ import dataSource from "./utils";
 import { buildSchema } from "type-graphql";
 import { skillResolvers } from "./resolver/skillResolver";
 import { WilderResolver } from "./resolver/wilderResolver";
-const port = 4000;
+const port = 5000;
 
 export const startServer = async () => {
   await dataSource.initialize();
