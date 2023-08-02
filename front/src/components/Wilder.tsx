@@ -33,7 +33,7 @@ const Wilder = ({ wilderId, name, city, skills }: IWilderProps) => {
   return (
     <article className="card">
       <img src={blank_profile} alt="Jane Doe Profile" />
-      <h3>{name}</h3>
+      <h3 data-cy="wilder-name">{name}</h3>
       <h4>{city}</h4>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -47,7 +47,12 @@ const Wilder = ({ wilderId, name, city, skills }: IWilderProps) => {
           <Skill key={index} title={title} votes={votes} />
         ))}
       </ul>
-      <button onClick={() => handleDeleteWilder(wilderId)}>Delete</button>
+      <button
+        data-cy={"delete-" + name}
+        onClick={() => handleDeleteWilder(wilderId)}
+      >
+        Delete
+      </button>
     </article>
   );
 };

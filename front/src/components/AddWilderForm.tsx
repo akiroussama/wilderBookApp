@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import { GET_ALL_WILDERS } from "../graphql/getAllWilders";
 
 const CREATE_WILDER = gql`
-   mutation Mutation($name: String!) {
+   mutation CREATE_WILDER($name: String!) {
     createWilder(name: $name) {
         name
     }
@@ -39,8 +39,13 @@ const AddWilderForm = () => {
 
   return (
     <form onSubmit={handleFormSubmit}>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      <button type="submit" disabled={loading}>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        data-cy="name"
+      />
+      <button type="submit" disabled={loading} data-cy="submitBtn">
         {loading ? "Adding..." : "Add Data"}
       </button>
       {error && <p>Error: {error.message}</p>}
