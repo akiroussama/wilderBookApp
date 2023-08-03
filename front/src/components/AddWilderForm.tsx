@@ -4,11 +4,11 @@ import { useQuery } from "@apollo/client";
 import { GET_ALL_WILDERS } from "../graphql/getAllWilders";
 
 const CREATE_WILDER = gql`
-   mutation Mutation($name: String!) {
+  mutation CREATE_WILDER($name: String!) {
     createWilder(name: $name) {
-        name
+      name
     }
-}
+  }
 `;
 
 const AddWilderForm = () => {
@@ -16,12 +16,12 @@ const AddWilderForm = () => {
   const { data, refetch } = useQuery(GET_ALL_WILDERS);
 
   const [addData, { loading, error }] = useMutation(CREATE_WILDER, {
-    onCompleted: (data) => {
+    onCompleted: data => {
       console.log("Added data:", data.addData);
       setInputValue("");
       refetch(); // Refetch the GET_WILDERS query after the deletion is completed
     },
-    onError: (error) => {
+    onError: error => {
       console.error("Error adding data:", error);
     },
   });
@@ -39,9 +39,14 @@ const AddWilderForm = () => {
 
   return (
     <form onSubmit={handleFormSubmit}>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      <button type="submit" disabled={loading}>
-        {loading ? "Adding..." : "Add Data"}
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        data-cy="addBtn"
+      />
+      <button type="submit" disabled={loading} test-id="submitBtn">
+        {loading ? "Adding..." : "Add Data Here"}
       </button>
       {error && <p>Error: {error.message}</p>}
     </form>

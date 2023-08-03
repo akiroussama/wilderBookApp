@@ -3,18 +3,21 @@ services:
     build: ./front
     environment:
       - WDS_SOCKET_PORT=0
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     restart: always
     volumes:
       - ./front/src:/app/src
     ports:
-      - 3001:3000
+      - 3000:3000
+
   api:
     build: ./back
     restart: always
     volumes:
       - ./back/src:/app/src
     ports:
-      - 5001:5000
+      - 5000:5000
   db:
     image: postgres
     restart: always

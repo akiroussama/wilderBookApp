@@ -56,7 +56,7 @@ function App() {
       </main>
       <footer>
         <div className="container">
-          <p>&copy; 2022 Wild Code School</p>
+          <p>&copy; 2023 Wild Code School</p>
         </div>
       </footer>
     </div>
